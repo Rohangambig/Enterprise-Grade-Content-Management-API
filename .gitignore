@@ -21,3 +21,6 @@ Thumbs.db
 # Build output
 dist/
 build/
+uploads/
+videoUploads/
+pdf/
