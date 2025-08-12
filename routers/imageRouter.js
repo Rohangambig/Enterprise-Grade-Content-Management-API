@@ -1,6 +1,6 @@
 const express = require('express');
 const { authController } = require('../middleware/auth.js');
-const { uploadImage } =  require('../controller/imageController.js');
+const { uploadImage, getImages, deleteImageById , pegination } =  require('../controller/imageController.js');
 const multer = require('multer');
 const path = require('path');
 
@@ -31,5 +31,8 @@ const upload = multer({storage : storage ,
 const router = express.Router();
 
 router.post('/upload',authController, upload.single('image') ,uploadImage);
+router.get('/get',getImages);
+router.delete('/delete/:id',authController,deleteImageById);
+router.get('/pegination',pegination);
 
 module.exports = router;

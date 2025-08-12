@@ -53,7 +53,7 @@ const loginUser = async(req,res) => {
             })
         }
 
-        const isMatch = await bcrypt.compare(password,user.password);
+        const isMatch =  bcrypt.compare(password,user.password);
         if(!isMatch) 
             return res.status(400).json({
             success:false,
@@ -84,7 +84,48 @@ const loginUser = async(req,res) => {
     }
 }
 
+const ChangePassword = async(req,res) => {
+
+    try {
+
+        const userId = req.userInfo.userId;
+        console.log('userID : ',userId);
+        
+        const { oldPassword, newPassword } = req.body;
+
+        const user = await User.findOne({_id:userId});
+        const isMatch = await bcrypt.compare(oldPassword,user.password);
+
+        if(!isMatch) {
+            return res.status({
+                success:false,
+                message:'old password is not correct'
+            })
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashNewPassword = await bcrypt.hash(newPassword,salt );;
+
+        user.password = hashNewPassword;
+        await user.save();
+
+        return res.status(201).json({
+            success:false,
+            message:'password updated',
+            user:user
+        })
+
+    }catch(err) {
+        return res.status(500).json({
+            success:false,
+            message:"Internal server error",
+            error:err.message
+        })
+    }
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    ChangePassword
 }
